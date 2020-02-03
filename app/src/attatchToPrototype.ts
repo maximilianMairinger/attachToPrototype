@@ -63,6 +63,7 @@ export function constructApplyToPrototype(prototype: any) {
         value: function(...values: any[]) {
           if (values.length !== 0) f.set.apply(this, values)
           else return f.get.call(this)
+          return this
         }
       }
     }
