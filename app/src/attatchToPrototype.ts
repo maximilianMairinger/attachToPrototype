@@ -37,7 +37,7 @@ export function constructApplyToPrototype(prototype: any) {
   let isFunc
   let f
   let n
-  return function(name: string | string[], func: Function | {get?: () => any, set?: (...to: any) => void}) {
+  return function(name: string | string[], func: Function | {get: () => any, set: (...to: any) => void}) {
     isFunc = typeof func === "function"
     f = func
     n = name
