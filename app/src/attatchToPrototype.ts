@@ -1,5 +1,5 @@
 export function constructAttatchToPrototype(prototype: any) {
-  return function(name: string | string[], func: Function) {
+  return function(name: string | string[], func: Function | any) {
     const isFunc = typeof func === "function"
     if (name instanceof Array) {
       for (let i = 0; i < name.length; i++) {
@@ -9,7 +9,7 @@ export function constructAttatchToPrototype(prototype: any) {
     else appendToPrototype(name, func, isFunc)
   }
 
-  function appendToPrototype(name: string, func: Function, isFunc: boolean) {
+  function appendToPrototype(name: string, func: Function | any, isFunc: boolean) {
     let ob: any
     if (isFunc) {
       ob = {
