@@ -1,59 +1,49 @@
 export function constructAttatchToPrototype(prototype: any) {
-  let isFunc
-  let f
-  let n
   return function(name: string | string[], func: Function | any) {
-    isFunc = typeof func === "function"
-    f = func
-    n = name
+    const isFunc = typeof func === "function"
     if (name instanceof Array) {
       for (let i = 0; i < name.length; i++) {
-        appendToPrototype()
+        appendToPrototype(name[i], func, isFunc)
       }
     }
-    else appendToPrototype()
+    else appendToPrototype(name, func, isFunc)
   }
 
-  function appendToPrototype() {
+  function appendToPrototype(name: string, func: Function | any, isFunc: boolean) {
     let ob: any
     if (isFunc) {
       ob = {
-        value: f,
+        value: func,
         enumerable: false
       }
     }
     else {
-      ob = f
+      ob = func
       ob.enumerable = false
     }
 
-    Object.defineProperty(prototype, n, ob)
+    Object.defineProperty(prototype, name, ob)
   }
 }
 
 export default constructAttatchToPrototype
 
 export function constructApplyToPrototype(prototype: any) {
-  let isFunc
-  let f
-  let n
   return function(name: string | string[], func: Function | {get: () => any, set: (...to: any) => void}) {
-    isFunc = typeof func === "function"
-    f = func
-    n = name
+    const isFunc = typeof func === "function"
     if (name instanceof Array) {
       for (let i = 0; i < name.length; i++) {
-        appendToPrototype()
+        appendToPrototype(name[i], func, isFunc)
       }
     }
-    else appendToPrototype()
+    else appendToPrototype(name, func, isFunc)
   }
 
-  function appendToPrototype() {
+  function appendToPrototype(name: string, func: Function | {get: () => any, set: (...to: any) => void}, isFunc: boolean) {
     let ob: any
     if (isFunc) {
       ob = {
-        value: f,
+        value: func,
         enumerable: false
       }
     }
@@ -68,8 +58,6 @@ export function constructApplyToPrototype(prototype: any) {
       }
     }
 
-    Object.defineProperty(prototype, n, ob)
+    Object.defineProperty(prototype, name, ob)
   }
 }
-
-
