@@ -51,8 +51,8 @@ export function constructApplyToPrototype(prototype: any) {
       ob = {
         enumerable: false,
         value: function(...values: any[]) {
-          if (values.length !== 0) f.set.apply(this, values)
-          else return f.get.call(this)
+          if (values.length !== 0) (func as any).set.apply(this, values)
+          else return (func as any).get.call(this)
           return this
         }
       }
