@@ -19,7 +19,7 @@ export function constructAttatchToPrototype(prototype: any) {
     }
     else {
       ob = func
-      ob.enumerable = false
+      if (ob.enumerable === undefined) ob.enumerable = false
     }
 
     Object.defineProperty(prototype, name, ob)
