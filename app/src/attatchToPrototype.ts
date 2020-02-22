@@ -14,12 +14,14 @@ export function constructAttatchToPrototype(prototype: any) {
     if (isFunc) {
       ob = {
         value: func,
-        enumerable: false
+        enumerable: false,
+        configurable: true
       }
     }
     else {
       ob = func
       if (ob.enumerable === undefined) ob.enumerable = false
+      if (ob.configurable === undefined) ob.configurable = true
     }
 
     Object.defineProperty(prototype, name, ob)
@@ -44,7 +46,8 @@ export function constructApplyToPrototype(prototype: any) {
     if (isFunc) {
       ob = {
         value: func,
-        enumerable: false
+        enumerable: false,
+        configurable: true
       }
     }
     else {
@@ -54,7 +57,8 @@ export function constructApplyToPrototype(prototype: any) {
           if (values.length !== 0) (func as any).set.apply(this, values)
           else return (func as any).get.call(this)
           return this
-        }
+        },
+        configurable: true
       }
     }
 
