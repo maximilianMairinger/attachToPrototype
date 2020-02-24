@@ -1,67 +1,100 @@
-export function constructAttatchToPrototype(prototype: any) {
-  return function(name: string | string[], func: Function | any) {
-    const isFunc = typeof func === "function"
-    if (name instanceof Array) {
-      for (let i = 0; i < name.length; i++) {
-        appendToPrototype(name[i], func, isFunc)
-      }
-    }
-    else appendToPrototype(name, func, isFunc)
-  }
+import clone from "tiny-clone"
 
-  function appendToPrototype(name: string, func: Function | any, isFunc: boolean) {
+
+
+type OptionsValue = {
+  writable: boolean
+} & OptionsGeneral
+
+
+type OptionsGeneral = {
+  configurable?: boolean,
+  enumerable?: boolean
+}
+
+type OptionsGetterSetter = OptionsGeneral
+
+type Options = OptionsValue | OptionsGeneral
+
+
+interface ObGetter extends OptionsGetterSetter {
+  get(): any
+}
+
+interface ObSetter extends OptionsGetterSetter {
+  set(...a: any[]): void
+}
+
+type ObGetterSetterMust = ObGetter & ObSetter
+
+type ObGetterSetter = ObGetterSetterMust | ObGetter | ObSetter
+
+interface ObValue extends OptionsValue {
+  value: any
+}
+
+type Ob = ObValue | ObGetterSetter
+
+export function constructAttatchToPrototype(prototype: any, defaultOptions: Options = {enumerable: false, configurable: true}) {
+  let options = clone(defaultOptions)
+
+  return function(name: string | string[], func: Function | Ob) {
     let ob: any
-    if (isFunc) {
-      ob = {
-        value: func,
-        enumerable: false,
-        configurable: true
-      }
+    if (typeof func === "function") {
+      ob = clone(options)
+      ob.value = func
     }
     else {
-      ob = func
-      if (ob.enumerable === undefined) ob.enumerable = false
-      if (ob.configurable === undefined) ob.configurable = true
+      ob = clone(options)
+      for (const k in func) {
+        ob[k] = func[k]
+      }
     }
 
+
+    if (name instanceof Array) {
+      for (let i = 0; i < name.length; i++) {
+        appendToPrototype(name[i], ob)
+      }
+    }
+    else appendToPrototype(name, ob)
+  }
+
+  function appendToPrototype(name: string, ob: any) {
     Object.defineProperty(prototype, name, ob)
   }
 }
 
 export default constructAttatchToPrototype
 
-export function constructApplyToPrototype(prototype: any) {
-  return function(name: string | string[], func: Function | {get: () => any, set: (...to: any) => void}) {
-    const isFunc = typeof func === "function"
-    if (name instanceof Array) {
-      for (let i = 0; i < name.length; i++) {
-        appendToPrototype(name[i], func, isFunc)
-      }
-    }
-    else appendToPrototype(name, func, isFunc)
-  }
+export function constructApplyToPrototype(prototype: any, defaultOptions: Options = {enumerable: false, configurable: true}) {
+  let options = clone(defaultOptions)
 
-  function appendToPrototype(name: string, func: Function | {get: () => any, set: (...to: any) => void}, isFunc: boolean) {
+  return function(name: string | string[], func: Function | ObGetterSetter) {
     let ob: any
-    if (isFunc) {
-      ob = {
-        value: func,
-        enumerable: false,
-        configurable: true
-      }
+    if (typeof func === "function") {
+      ob = clone(options)
+      ob.value = func
     }
     else {
-      ob = {
-        enumerable: false,
-        value: function(...values: any[]) {
-          if (values.length !== 0) (func as any).set.apply(this, values)
+      ob = clone(options)
+      ob.value = function(...values: any[]) {
+        if (values.length !== 0) (func as any).set.apply(this, values)
           else return (func as any).get.call(this)
           return this
-        },
-        configurable: true
       }
     }
 
+
+    if (name instanceof Array) {
+      for (let i = 0; i < name.length; i++) {
+        appendToPrototype(name[i], ob)
+      }
+    }
+    else appendToPrototype(name, ob)
+  }
+
+  function appendToPrototype(name: string, ob: any) {
     Object.defineProperty(prototype, name, ob)
   }
 }
