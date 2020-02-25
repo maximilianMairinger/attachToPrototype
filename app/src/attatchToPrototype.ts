@@ -2,38 +2,38 @@ import clone from "tiny-clone"
 
 
 
-type OptionsValue = {
+export type OptionsValue = {
   writable: boolean
 } & OptionsGeneral
 
 
-type OptionsGeneral = {
+export type OptionsGeneral = {
   configurable?: boolean,
   enumerable?: boolean
 }
 
-type OptionsGetterSetter = OptionsGeneral
+export type OptionsGetterSetter = OptionsGeneral
 
-type Options = OptionsValue | OptionsGeneral
+export type Options = OptionsValue | OptionsGeneral
 
 
-interface ObGetter extends OptionsGetterSetter {
+export interface ObGetter extends OptionsGetterSetter {
   get(): any
 }
 
-interface ObSetter extends OptionsGetterSetter {
+export interface ObSetter extends OptionsGetterSetter {
   set(...a: any[]): void
 }
 
-type ObGetterSetterMust = ObGetter & ObSetter
+export type ObGetterSetterMust = ObGetter & ObSetter
 
-type ObGetterSetter = ObGetterSetterMust | ObGetter | ObSetter
+export type ObGetterSetter = ObGetterSetterMust | ObGetter | ObSetter
 
-interface ObValue extends OptionsValue {
+export interface ObValue extends OptionsValue {
   value: any
 }
 
-type Ob = ObValue | ObGetterSetter
+export type Ob = ObValue | ObGetterSetter
 
 export function constructAttatchToPrototype(prototype: any, defaultOptions: Options = {enumerable: false, configurable: true}) {
   let options = clone(defaultOptions)
