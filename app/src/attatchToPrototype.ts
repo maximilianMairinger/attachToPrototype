@@ -35,8 +35,21 @@ export interface ObValue extends OptionsValue {
 
 export type Ob = ObValue | ObGetterSetter
 
-export function constructAttatchToPrototype(prototype: any, defaultOptions: Options = {enumerable: false, configurable: true}) {
-  let options = clone(defaultOptions)
+const constructAttachToPrototypes = (prototypes: any[]) => (name: string, ob: any) => {
+  prototypes.forEach((prototype) => {
+    Object.defineProperty(prototype, name, ob)
+  })
+}
+
+const constructAttachToPrototype = (prototype: any) => (name: string, ob: any) => {
+  Object.defineProperty(prototype, name, ob)
+}
+
+const getAttatch = (prototype: any | any[]) => prototype instanceof Array ? constructAttachToPrototypes(prototype) : constructAttachToPrototype(prototype)
+
+export function constructAttatchToPrototype(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
+  const options = clone(defaultOptions)
+  const attach = getAttatch(prototype)
 
   return function(name: string | string[], func: Function | Ob) {
     let ob: any
@@ -54,21 +67,19 @@ export function constructAttatchToPrototype(prototype: any, defaultOptions: Opti
 
     if (name instanceof Array) {
       for (let i = 0; i < name.length; i++) {
-        appendToPrototype(name[i], ob)
+        attach(name[i], ob)
       }
     }
-    else appendToPrototype(name, ob)
+    else attach(name, ob)
   }
 
-  function appendToPrototype(name: string, ob: any) {
-    Object.defineProperty(prototype, name, ob)
-  }
 }
 
 export default constructAttatchToPrototype
 
 export function constructApplyToPrototype(prototype: any, defaultOptions: Options = {enumerable: false, configurable: true}) {
-  let options = clone(defaultOptions)
+  const options = clone(defaultOptions)
+  const attach = getAttatch(prototype)
 
   return function(name: string | string[], func: Function | ObGetterSetter) {
     let ob: any
@@ -88,13 +99,9 @@ export function constructApplyToPrototype(prototype: any, defaultOptions: Option
 
     if (name instanceof Array) {
       for (let i = 0; i < name.length; i++) {
-        appendToPrototype(name[i], ob)
+        attach(name[i], ob)
       }
     }
-    else appendToPrototype(name, ob)
-  }
-
-  function appendToPrototype(name: string, ob: any) {
-    Object.defineProperty(prototype, name, ob)
+    else attach(name, ob)
   }
 }
