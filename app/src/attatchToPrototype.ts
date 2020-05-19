@@ -90,7 +90,7 @@ export function constructApplyToPrototype(prototype: any, defaultOptions: Option
     else {
       ob = clone(options)
       ob.value = function(...values: any[]) {
-        if (values.length !== 0) (func as any).set.apply(this, values)
+        if (values.length !== 0 && !values.every(q => q === undefined)) (func as any).set.apply(this, values)
           else return (func as any).get.call(this)
           return this
       }
