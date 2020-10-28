@@ -35,77 +35,66 @@ export interface ObValue extends OptionsValue {
 
 export type Ob = ObValue | ObGetterSetter
 
-const constructAttachToPrototypes = (prototypes: any[]) => (name: string, ob: any) => {
+const constAttachToPrototypes = (prototypes: any[]) => (name: string, ob: any) => {
   prototypes.forEach((prototype) => {
     Object.defineProperty(prototype, name, ob)
   })
 }
 
-const constructAttachToPrototype = (prototype: any) => (name: string, ob: any) => {
+const constAttachToPrototype = (prototype: any) => (name: string, ob: any) => {
   Object.defineProperty(prototype, name, ob)
 }
 
-const getAttatch = (prototype: any | any[]) => prototype instanceof Array ? constructAttachToPrototypes(prototype) : constructAttachToPrototype(prototype)
+const getAttach = (prototype: any | any[]) => prototype instanceof Array ? constAttachToPrototypes(prototype) : constAttachToPrototype(prototype)
 
-export function constructAttatchToPrototype(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
-  const options = clone(defaultOptions)
-  const attach = getAttatch(prototype)
+function constructConstructToPrototype(callWhenGetterSetter?: (func, options, that) => void) {
+  const hasCallWhenGetterSetter = callWhenGetterSetter !== undefined
+  return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
+    const options = clone(defaultOptions)
+    const attach = getAttach(prototype)
+    
 
-  return function(name: string | string[], func: Function | Ob): typeof func {
-    let ob: any
-    if (typeof func === "function") {
-      ob = clone(options)
-      ob.value = func
-    }
-    else {
-      ob = clone(options)
-      for (const k in func) {
-        ob[k] = func[k]
+    return function(name: string | string[], func: Function | Ob): typeof func {
+      let ob: any
+      if (typeof func === "function") {
+        ob = clone(options)
+        ob.value = func
       }
-    }
-
-
-    if (name instanceof Array) {
-      for (let i = 0; i < name.length; i++) {
-        attach(name[i], ob)
+      else {
+        ob = clone(options)
+        if (hasCallWhenGetterSetter && (func as any).value === undefined) {
+          callWhenGetterSetter(func, ob, this)
+        }
+        else {
+          for (const k in func) {
+            ob[k] = func[k]
+          }
+        }
+        
       }
-    }
-    else attach(name, ob)
 
-    return func
-  }
 
-}
-
-export default constructAttatchToPrototype
-
-export function constructApplyToPrototype(prototype: any, defaultOptions: Options = {enumerable: false, configurable: true}) {
-  const options = clone(defaultOptions)
-  const attach = getAttatch(prototype)
-
-  return function(name: string | string[], func: Function | ObGetterSetter): typeof func {
-    let ob: any
-    if (typeof func === "function") {
-      ob = clone(options)
-      ob.value = func
-    }
-    else {
-      ob = clone(options)
-      ob.value = function(...values: any[]) {
-        if (values.length !== 0 && !values.every(q => q === undefined)) (func as any).set.apply(this, values)
-          else return (func as any).get.call(this)
-          return this
+      if (name instanceof Array) {
+        for (let i = 0; i < name.length; i++) {
+          attach(name[i], ob)
+        }
       }
+      else attach(name, ob)
+
+      return func
     }
-
-
-    if (name instanceof Array) {
-      for (let i = 0; i < name.length; i++) {
-        attach(name[i], ob)
-      }
-    }
-    else attach(name, ob)
-
-    return func
   }
 }
+
+export const constructAttachToPrototype = constructConstructToPrototype()
+export const constructAttatchToPrototype = constructAttachToPrototype // legacy spelling error
+export default constructAttachToPrototype
+
+
+export const constructApplyToPrototype = constructConstructToPrototype((func, ob, that) => {
+  ob.value = function(...values: any[]) {
+    if (values.length !== 0 && !values.every(q => q === undefined)) (func as any).set.apply(this, values)
+      else return (func as any).get.call(this)
+      return that
+  }
+})
