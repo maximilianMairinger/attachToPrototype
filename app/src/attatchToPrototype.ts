@@ -51,7 +51,7 @@ export function constructAttatchToPrototype(prototype: any | any[], defaultOptio
   const options = clone(defaultOptions)
   const attach = getAttatch(prototype)
 
-  return function(name: string | string[], func: Function | Ob) {
+  return function(name: string | string[], func: Function | Ob): typeof func {
     let ob: any
     if (typeof func === "function") {
       ob = clone(options)
@@ -83,7 +83,7 @@ export function constructApplyToPrototype(prototype: any, defaultOptions: Option
   const options = clone(defaultOptions)
   const attach = getAttatch(prototype)
 
-  return function(name: string | string[], func: Function | ObGetterSetter) {
+  return function(name: string | string[], func: Function | ObGetterSetter): typeof func {
     let ob: any
     if (typeof func === "function") {
       ob = clone(options)
