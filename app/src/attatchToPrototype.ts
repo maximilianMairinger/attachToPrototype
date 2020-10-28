@@ -72,7 +72,7 @@ export function constructAttatchToPrototype(prototype: any | any[], defaultOptio
     }
     else attach(name, ob)
 
-    return ob.value
+    return func
   }
 
 }
@@ -106,6 +106,6 @@ export function constructApplyToPrototype(prototype: any, defaultOptions: Option
     }
     else attach(name, ob)
 
-    return ob.value
+    return func
   }
 }
