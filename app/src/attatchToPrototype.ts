@@ -3,7 +3,7 @@ import clone from "tiny-clone"
 
 
 export type OptionsValue = {
-  writable: boolean
+  writable?: boolean
 } & OptionsGeneral
 
 
