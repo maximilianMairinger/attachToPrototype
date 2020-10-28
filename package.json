@@ -40,6 +40,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "fast-copy": "^2.1.0",
     "tiny-clone": "^1.0.0"
   }
 }
