@@ -45,7 +45,7 @@ const constAttachToPrototype = (prototype: any) => (name: string, ob: any) => {
 
 const getAttach = (prototype: any | any[]) => prototype instanceof Array ? constAttachToPrototypes(prototype) : constAttachToPrototype(prototype)
 
-function constructConstructToPrototype(callWhenGetterSetter?: (func, options, that) => void) {
+function constructConstructToPrototype(callWhenGetterSetter?: (func, options) => void) {
   const hasCallWhenGetterSetter = callWhenGetterSetter !== undefined
   return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
     const options = clone(defaultOptions)
@@ -61,7 +61,7 @@ function constructConstructToPrototype(callWhenGetterSetter?: (func, options, th
       else {
         ob = clone(options)
         if (hasCallWhenGetterSetter && (func as any).value === undefined) {
-          callWhenGetterSetter(func, ob, this)
+          callWhenGetterSetter(func, ob)
         }
         else {
           for (const k in func) {
@@ -89,10 +89,10 @@ export const constructAttatchToPrototype = constructAttachToPrototype // legacy 
 export default constructAttachToPrototype
 
 
-export const constructApplyToPrototype = constructConstructToPrototype((func, ob, that) => {
+export const constructApplyToPrototype = constructConstructToPrototype((func, ob) => {
   ob.value = function(...values: any[]) {
     if (values.length !== 0 && !values.every(q => q === undefined)) (func as any).set.apply(this, values)
       else return (func as any).get.call(this)
-      return that
+      return this
   }
 })
