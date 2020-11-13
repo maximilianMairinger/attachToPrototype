@@ -91,8 +91,10 @@ export default constructAttachToPrototype
 
 export const constructApplyToPrototype = constructConstructToPrototype((func, ob) => {
   ob.value = function(...values: any[]) {
-    if (values.length !== 0 && !values.every(q => q === undefined)) (func as any).set.apply(this, values)
-      else return (func as any).get.call(this)
-      return this
+    if (values.length !== 0 && !values.every(q => q === undefined)) {
+      const r = (func as any).set.apply(this, values)
+      return r === undefined ? this : r
+    }
+    else return (func as any).get.call(this)
   }
 })
