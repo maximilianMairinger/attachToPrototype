@@ -1,6 +1,6 @@
 {
   "name": "attatch-to-prototype",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "Attatch functions as non enumerable properties to the prototype of any object.",
   "main": "app/dist/attatchToPrototype.js",
   "types": "app/dist/attatchToPrototype.d.ts",
