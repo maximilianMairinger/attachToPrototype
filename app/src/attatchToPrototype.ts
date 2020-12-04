@@ -47,7 +47,7 @@ const getAttach = (prototype: any | any[]) => prototype instanceof Array ? const
 
 function constructConstructToPrototype(callWhenGetterSetter?: (func, options) => void) {
   const hasCallWhenGetterSetter = callWhenGetterSetter !== undefined
-  return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
+  return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true, writable: true}) {
     const options = clone(defaultOptions)
     const attach = getAttach(prototype)
     
