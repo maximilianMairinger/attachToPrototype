@@ -25,7 +25,7 @@ export interface ObSetter extends OptionsGetterSetter {
 
 export type ObGetterSetterMust = ObGetter & ObSetter
 
-export type ObGetterSetter = ObGetterSetterMust | ObGetter | ObSetter
+export type ObGetterSetter = ObGetterSetterMust & ObGetter & ObSetter
 
 export interface ObValue extends OptionsValue {
   value: any
@@ -47,19 +47,23 @@ const getAttach = (prototype: any | any[]) => prototype instanceof Array ? const
 
 function constructConstructToPrototype(callWhenGetterSetter?: (func, options) => void) {
   const hasCallWhenGetterSetter = callWhenGetterSetter !== undefined
-  return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true, writable: true}) {
-    const options = clone(defaultOptions)
+  return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
+    const getSetOptions = clone(defaultOptions) as ObGetterSetter
+    delete (getSetOptions as OptionsValue).writable
+    const valueOptions = clone(defaultOptions) as any as OptionsValue
+    if (valueOptions.writable === undefined) valueOptions.writable = true
+
     const attach = getAttach(prototype)
     
 
     return function(name: string | string[], func: Function | Ob): typeof func {
       let ob: any
       if (typeof func === "function") {
-        ob = clone(options)
+        ob = clone(valueOptions)
         ob.value = func
       }
       else {
-        ob = clone(options)
+        ob = clone(getSetOptions)
         if (hasCallWhenGetterSetter && (func as any).value === undefined) {
           callWhenGetterSetter(func, ob)
         }
