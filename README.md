@@ -1,17 +1,17 @@
-# Attatch to prototype
+# Attach to prototype
 
-Attatch functions as non enumerable properties to the prototype of any object.
+Attach functions as non enumerable properties to the prototype of any object.
 
-> Please not that Attatch to prototype is currently under development and not yet suited for production
+> Please not that Attach to prototype is currently under development and not yet suited for production
 
 ## Example
 
 ### Generic
 
 ```ts
-import { constructAttatchToPrototype } from "attatch-to-prototype"
+import { constructAttachToPrototype } from "attatch-to-prototype"
 
-const attachToArray = constructAttatchToPrototype(Array.prototype/*, options*/)
+const attachToArray = constructAttachToPrototype(Array.prototype/*, options*/)
 attachToArray("removeByValue", function(value) {
   const index = this.indexOf(value)
   if (index === -1) return
