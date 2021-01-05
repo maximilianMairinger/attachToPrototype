@@ -1,4 +1,4 @@
-import clone from "fast-copy"
+const clone = require("fast-copy")
 
 export type OptionsValue = {
   writable?: boolean
