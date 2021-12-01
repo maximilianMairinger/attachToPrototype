@@ -1,4 +1,4 @@
-import clone from "fast-copy"
+import clone from "tiny-clone"
 
 export type OptionsValue = {
   writable?: boolean
