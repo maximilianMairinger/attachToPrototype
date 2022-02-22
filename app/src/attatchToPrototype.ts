@@ -25,7 +25,7 @@ export interface ObSetter extends OptionsGetterSetter {
 
 export type ObGetterSetterMust = ObGetter & ObSetter
 
-export type ObGetterSetter = ObGetterSetterMust & ObGetter | ObSetter
+export type ObGetterSetter = ObGetterSetterMust & (ObGetter | ObSetter)
 
 export interface ObValue extends OptionsValue {
   value: any
