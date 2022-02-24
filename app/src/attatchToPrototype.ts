@@ -49,13 +49,14 @@ function constructConstructToPrototype(callWhenGetterSetter?: (func: {get(): any
   const hasCallWhenGetterSetter = callWhenGetterSetter !== undefined
   return function(prototype: any | any[], defaultOptions: Options = {}) {
     if (defaultOptions.enumerable === undefined) defaultOptions.enumerable = true
+    if ((defaultOptions as OptionsValue).writable === undefined) (defaultOptions as OptionsValue).writable = true
+    if (defaultOptions.configurable === undefined) defaultOptions.configurable = (defaultOptions as OptionsValue).writable
+
+
 
     const getSetOptions = clone(defaultOptions) as ObGetterSetter
-    delete (getSetOptions as OptionsValue).writable
-    delete (getSetOptions as OptionsValue).configurable
+    delete (getSetOptions as OptionsValue).writable    
     const valueOptions = clone(defaultOptions) as any as OptionsValue
-    if (valueOptions.writable === undefined) valueOptions.writable = true
-    if (valueOptions.configurable === undefined) valueOptions.configurable = valueOptions.writable
 
     const attach = getAttach(prototype)
     
