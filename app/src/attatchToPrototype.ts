@@ -45,13 +45,17 @@ const constAttachToPrototype = (prototype: any) => (name: string, ob: any) => {
 
 const getAttach = (prototype: any | any[]) => prototype instanceof Array ? constAttachToPrototypes(prototype) : constAttachToPrototype(prototype)
 
-function constructConstructToPrototype(callWhenGetterSetter?: (func, options) => void) {
+function constructConstructToPrototype(callWhenGetterSetter?: (func: {get(): any, set(a: any): void}) => void) {
   const hasCallWhenGetterSetter = callWhenGetterSetter !== undefined
-  return function(prototype: any | any[], defaultOptions: Options = {enumerable: false, configurable: true}) {
+  return function(prototype: any | any[], defaultOptions: Options = {}) {
+    if (defaultOptions.enumerable === undefined) defaultOptions.enumerable = true
+
     const getSetOptions = clone(defaultOptions) as ObGetterSetter
     delete (getSetOptions as OptionsValue).writable
+    delete (getSetOptions as OptionsValue).configurable
     const valueOptions = clone(defaultOptions) as any as OptionsValue
     if (valueOptions.writable === undefined) valueOptions.writable = true
+    if (valueOptions.configurable === undefined) valueOptions.configurable = valueOptions.writable
 
     const attach = getAttach(prototype)
     
@@ -63,11 +67,12 @@ function constructConstructToPrototype(callWhenGetterSetter?: (func, options) =>
         ob.value = func
       }
       else {
-        ob = clone(getSetOptions)
         if (hasCallWhenGetterSetter && (func as any).value === undefined) {
-          callWhenGetterSetter(func, ob)
+          ob = clone(valueOptions)
+          ob.value = callWhenGetterSetter(func as {get(): any, set(a: any): void})
         }
         else {
+          ob = clone(getSetOptions)
           for (const k in func) {
             ob[k] = func[k]
           }
@@ -93,8 +98,8 @@ export const constructAttatchToPrototype = constructAttachToPrototype // legacy 
 export default constructAttachToPrototype
 
 
-export const constructApplyToPrototype = constructConstructToPrototype((func, ob) => {
-  ob.value = function(...values: any[]) {
+export const constructApplyToPrototype = constructConstructToPrototype((func) => {
+  return function(...values: any[]) {
     if (values.length !== 0 && !values.every(q => q === undefined)) {
       const r = (func as any).set.apply(this, values)
       return r === undefined ? this : r
