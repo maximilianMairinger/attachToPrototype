@@ -33,13 +33,15 @@ export interface ObValue extends OptionsValue {
 
 export type Ob = ObValue | ObGetterSetter
 
-const constAttachToPrototypes = (prototypes: any[]) => (name: string, ob: any) => {
+type Key = string | number | symbol
+
+const constAttachToPrototypes = (prototypes: any[]) => (name: Key, ob: any) => {
   prototypes.forEach((prototype) => {
     Object.defineProperty(prototype, name, ob)
   })
 }
 
-const constAttachToPrototype = (prototype: any) => (name: string, ob: any) => {
+const constAttachToPrototype = (prototype: any) => (name: Key, ob: any) => {
   Object.defineProperty(prototype, name, ob)
 }
 
@@ -61,7 +63,7 @@ function constructConstructToPrototype(callWhenGetterSetter?: (func: {get(): any
     const attach = getAttach(prototype)
     
 
-    return function(name: string | string[], func: Function | Ob): typeof func {
+    return function(name: Key | Key[], func: Function | Ob): typeof func {
       let ob: any
       if (typeof func === "function") {
         ob = clone(valueOptions)
