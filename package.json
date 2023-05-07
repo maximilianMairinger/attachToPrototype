@@ -2,14 +2,14 @@
   "name": "attatch-to-prototype",
   "version": "1.3.18",
   "description": "Attach functions as non enumerable properties to the prototype of any object.",
-  "main": "./app/dist/esm/attatchToPrototype.js",
+  "main": "./app/dist/esm/attatchToPrototype.mjs",
   "types": "./app/dist/esm/attatchToPrototype.d.ts",
   "exports": {
     "node": {
-      "import": "./app/dist/esm/attatchToPrototype.js",
+      "import": "./app/dist/esm/attatchToPrototype.mjs",
       "require": "./app/dist/cjs/attatchToPrototype.js"
     },
-    "default": "./app/dist/esm/attatchToPrototype.js"
+    "default": "./app/dist/esm/attatchToPrototype.mjs"
   },
   "scripts": {
     "build": "del-cli app/dist && concurrently \"npm run buildESM\" \"npm run buildCJS\" --raw",
