@@ -14,7 +14,8 @@
   "scripts": {
     "build": "del-cli app/dist && concurrently \"npm run buildESM\" \"npm run buildCJS\" --raw",
     "buildESM": "tsc -p ./tsconfig.prod.esm.json && mjsify app/dist esm cjs",
-    "buildCJS": "tsc -p ./tsconfig.prod.cjs.json",
+    "buildCJS": "tsc -p ./tsconfig.prod.cjs.json && npm run buildCJS2",
+    "buildCJS2": "rollup --config rollup.node.prod.config.mjs",
     "dev": "webpack --config webpack.dev.config.js",
     "deploy": "npm run build && npm publish",
     "test": "node ./test/dist/test-bundle"
@@ -36,25 +37,31 @@
   },
   "homepage": "https://github.com/maximilianMairinger/attatchToPrototype#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-typescript": "^11.1.1",
     "@types/node": "^12.6.9",
     "@types/tween.js": "^17.2.0",
-    "concurrently": "^8.0.1",
+    "builtins": "^5.0.1",
+    "concurrently": "^8.2.0",
     "css-loader": "^2.1.0",
     "cssnano": "^4.1.8",
     "del-cli": "^5.0.0",
-    "mjsify": "^2.0.7",
+    "mjsify": "^2.0.8",
     "postcss-loader": "^3.0.0",
+    "rollup": "^3.23.1",
     "terser-webpack-plugin": "^1.2.2",
     "to-string-loader": "^1.1.6",
     "ts-loader": "^5.3.3",
-    "typescript": "^3.5.2",
+    "typescript": "^5.0.4",
     "url-loader": "^1.1.2",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
     "webpack-inject-plugin": "^1.5.2",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^5.9.0"
   },
   "dependencies": {
-    "tiny-clone": "^1.0.0"
+    "circ-clone": "^2.1.4"
   }
 }

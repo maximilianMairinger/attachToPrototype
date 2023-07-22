@@ -1,4 +1,4 @@
-import clone from "tiny-clone"
+import clone from "circ-clone"
 
 export type OptionsValue = {
   writable?: boolean
@@ -25,7 +25,7 @@ export interface ObSetter extends OptionsGetterSetter {
 
 export type ObGetterSetterMust = ObGetter & ObSetter
 
-export type ObGetterSetter = ObGetterSetterMust & (ObGetter | ObSetter)
+export type ObGetterSetter = ObGetterSetterMust | (ObGetter | ObSetter)
 
 export interface ObValue extends OptionsValue {
   value: any
